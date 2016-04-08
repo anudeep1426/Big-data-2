@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        .arc text {
+        font: 10px sans-serif;
+        text-anchor: middle;
+        }
+
+        .arc path {
+        stroke: #fff;
+        }
+
+    </style>
+</head>
+<body>
+<h2 align="center">Android and IOS Users by Coutry</h2><br><br>
+<h2 style="margin-left:200px;">
+    Android Users
+    <span style="margin-left:450px;">IOS Users</span>
+</h2>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+
+var width = 560,
+    height = 500,
+    radius = Math.min(width, height) / 2;
+
+var color = d3.scale.ordinal()
+    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+var arc = d3.svg.arc()
+    .outerRadius(radius - 20)
+    .innerRadius(0);
+
+var labelArc = d3.svg.arc()
+    .outerRadius(radius - 40)
+    .innerRadius(radius - 40);
+
+var pie = d3.layout.pie()
+    .sort(null)
+    .value(function(d) { return d.android_count; });
+
+var pie2 = d3.layout.pie()
+    .sort(null)
+    .value(function(e) { return e.ios_count; });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+var svg2 = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+d3.csv("result3.csv", type, function(error, data) {
+  if (error) throw error;
+
+  var g = svg.selectAll(".arc")
+      .data(pie(data))
+    .enter().append("g")
+      .attr("class", "arc");
+
+  g.append("path")
+      .attr("d", arc)
+      .style("fill", function(d) { return color(d.data.location); });
+
+  g.append("text")
+      .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+      .attr("dy", ".35em")
+      .text(function(d) { return d.data.location; });
+});
+
+d3.csv("result4.csv", type, function(error, data) {
+  if (error) throw error;
+  var g = svg2.selectAll(".arc")
+      .data(pie2(data))
+    .enter().append("g")
+      .attr("class", "arc");
+
+  g.append("path")
+      .attr("d", arc)
+      .style("fill", function(d) { return color(d.data.location); });
+
+  g.append("text")
+      .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+      .attr("dy", ".35em")
+      .text(function(d) { return d.data.location; });
+});
+
+function type(d) {
+  d.android_count = +d.android_count;
+  return d;
+}
+
+function type(e) {
+  e.ios_count = +e.ios_count;
+  return e;
+}
+
+</script>
+</body>
+</html>

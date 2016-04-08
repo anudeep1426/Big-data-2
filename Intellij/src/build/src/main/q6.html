@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Text color</title>
+    <style>
+
+        .arc text {
+        color : white;
+        text-anchor: middle;
+        }
+
+        .arc path {
+        stroke: #ffff;
+        }
+
+    </style>
+</head>
+<body>
+<h1 align="center">Most used profile text color</h1>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+
+var width = 960,
+    height = 500,
+    radius = Math.min(width, height) / 2;
+
+var color = d3.scale.ordinal()
+    .range(["#333333", "#000000", "#666666", "#3D1957", "#362720", "#3C3940", "#3E4415",
+    "#634047", "#663B12", "#0C3E53", "#5E412F", "#FFFFFF", "#0084B4", "#CE7834", "#FF0000", "#050505", "#080808", "#53AB8D", "#892DD8"]);
+
+var arc = d3.svg.arc()
+    .outerRadius(radius - 10)
+    .innerRadius(radius - 70);
+
+var pie = d3.layout.pie()
+    .sort(null)
+    .value(function(d) { return d.textColorCount; });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+d3.csv("result6.csv", type, function(error, data) {
+  if (error) throw error;
+
+  var g = svg.selectAll(".arc")
+      .data(pie(data))
+    .enter().append("g")
+      .attr("class", "arc");
+
+  g.append("path")
+      .attr("d", arc)
+      .style("fill", function(d) { return color(d.data.profile_text_color); });
+
+  g.append("text")
+      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+      .attr("dy", ".35em")
+      .text(function(d) { return d.data.profile_text_color; });
+});
+
+function type(d) {
+  d.textColorCount = +d.textColorCount;
+  return d;
+}
+
+</script>
+</body>
+</html>
